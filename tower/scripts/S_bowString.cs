@@ -11,22 +11,18 @@ public class S_bowString : MonoBehaviour
     private Transform endPoint1, endPoint2;
     // private Vector3 midPosition;
 
-    private void Awake()
-    {
+    private void Awake() {
         bowString = GetComponent<LineRenderer>();
     }
 
-    public void create_string(Vector3? midPos)
-    {
-        int numPoints = midPos == null ? 2 : 3;
+     public void create_string(Vector3? midPos){
         Vector3[] linePoints = new Vector3[3];
 
         linePoints[0] = endPoint1.localPosition;
 
-        if (midPos != null)
-        {
+        if (midPos != null) {
             // Transform midPos into the local space of the bowString's parent
-            linePoints[1] = transform.parent.InverseTransformPoint(midPos.Value);
+            linePoints[1] = transform.InverseTransformPoint(midPos.Value);
         }
 
         linePoints[2] = endPoint2.localPosition;
@@ -35,8 +31,7 @@ public class S_bowString : MonoBehaviour
         bowString.SetPositions(linePoints);
     }
 
-    public void ResetString()
-    {
+    public void ResetString(){
         // Reset the bowstring when released
         Vector3[] linePoints = new Vector3[2];
         linePoints[0] = Vector3.zero;
@@ -45,8 +40,7 @@ public class S_bowString : MonoBehaviour
         bowString.SetPositions(linePoints);
     }
 
-    private void Start()
-    {
+    private void Start(){
         // Call createString with null midPosition
         create_string(null);
     }

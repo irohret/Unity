@@ -17,6 +17,15 @@ public class T_string : MonoBehaviour {
     public float pullAmount = 1.5f;
     private XRGrabInteractable XRinteractable;
 
+
+
+    public  S_arrow_controller arrow;
+
+    [SerializeField]
+    private float speed = 10;
+
+
+
     private void Awake(){
         bowString = GetComponent<LineRenderer>();
         XRinteractable = grab_object.GetComponent<XRGrabInteractable>();
@@ -65,6 +74,7 @@ public class T_string : MonoBehaviour {
             create_string(null);
         } else{
             // XRinteractable.isSelected is true
+            
             if(XRinteractable.isSelected){
                 Vector3 midPoint_space = parent.InverseTransformPoint(grab_object.position);
                 float abs = Mathf.Abs(midPoint_space.z);
@@ -80,6 +90,14 @@ public class T_string : MonoBehaviour {
 
     void OnPull(float abs, Vector3 midPoint_space){
         if (midPoint_space.z < 0 && abs < pullAmount){
+
+            arrow.getArrow();
+            arrow.transform.position = notch.position;
+            arrow.transform.rotation = notch.rotation;
+
+            Vector3 launchDirection = notch.forward;
+
+            arrow.arrowRB.AddForce(launchDirection * speed, ForceMode.Impulse);
             notch.localPosition = new Vector3(0, 0, midPoint_space.z);
         }
     }
