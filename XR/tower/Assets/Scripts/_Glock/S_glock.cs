@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+[RequireComponent(typeof(Rigidbody))]
+
 public class S_glock : MonoBehaviour
 {
     [SerializeField] GameObject bulletPrefab;
@@ -16,45 +18,68 @@ public class S_glock : MonoBehaviour
     // this script is attacted to the magagize gameObject;
     // S_XRGrabOverride grab; 
 
+    private XRSocketInteractor socket;
 
-     XRSocketInteractor socket;
+    private Rigidbody rb;
 
-    private bool canFire = false;
+    public GameObject socketObject;
 
-    private void Start()
+
+    public float recoil = 0.5f;
+
+    private async void Start()
     {
-        canFire = false;
+        
+        socket = socketObject.GetComponent<XRSocketInteractor>();
+        
         interactable = GetComponent<XRBaseInteractable>();
-        interactable.onSelectEntered.AddListener(OnSelectEntered);
-        interactable.activated.AddListener(OnActivated);
+        rb = GetComponent<Rigidbody>();
+        socket.onSelectEntered.AddListener(OnSelectEntered);
+        socket.onSelectExited.AddListener(OnSelectExited);
 
-        socket = GetComponent<XRSocketInteractor>();
+        interactable.onActivate.AddListener(OnActivate);
+        interactable.onDeactivate.AddListener(OnDeactivate);
+
     }
 
-    private void OnSelectEntered(XRBaseInteractor interactor)
-    {
-        // Object has been accepted by an XR interactor
-        Debug.Log("Object has been accepted by an XR interactor");
+    private void OnSelectEntered(XRBaseInteractable interactable){
 
-        // iff when the object is accepted can we use the trigger to fire the weapon
-        canFire = true;
-        // fire();
     }
 
-    private void OnActivated(ActivateEventArgs args)
-    {
-         Debug.Log(socket.hasSelection);
-        if(canFire){
+    private void OnSelectExited(XRBaseInteractable interactable){
+
+    }
+
+    private void OnDeactivate(XRBaseInteractor interactor){
+        Debug.Log("Object stop");
+    }
+
+
+    private void OnActivate(XRBaseInteractor interactor){
+        // Check if there is an object inside the socket
+        if (socketObject != null){
             fire();
+            onRecoil();
+        } else {    
+            Debug.Log("No object inside the socket. Cannot fire.");
         }
-       Debug.Log("OnActivated");
+    }
+
+    private void fire(){
+        // Check if there is a selected target in the socket interactor
+    
+        if (socket != null && socket.selectTarget != null) {
+            GameObject bullet = Instantiate(bulletPrefab, spawn.position, spawn.rotation);
+            bullet.GetComponent<Rigidbody>().velocity = launchForce * spawn.forward;
+            onRecoil();
+            Destroy(bullet, 5f);
+        } else {
+            Debug.Log("No magazine in the socket interactor. Cannot fire.");
+        }
     }
 
 
-    private void fire()
-    {
-        GameObject bullet = Instantiate(bulletPrefab, spawn.position, spawn.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = launchForce * spawn.forward;
-        Destroy(bullet, 5f);
+    private void onRecoil(){
+        rb.AddRelativeForce(Vector3.back * recoil, ForceMode.Impulse);
     }
 }

@@ -9,7 +9,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class S_arrow_controller : MonoBehaviour
 {
     [SerializeField]
-    private GameObject arrowNew,VisualNotch, spawnPoint;
+    private GameObject arrowNew, VisualNotch, spawnPoint;
 
     [SerializeField] 
     private float launchForce = 1.5f;
@@ -44,6 +44,4 @@ public class S_arrow_controller : MonoBehaviour
         // Apply force to the arrow to launch it
         arrowRB.AddForce(localBowForward * launchForce * strength, ForceMode.Impulse);
     }
-
-    // 
 }

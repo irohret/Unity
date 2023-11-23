@@ -17,6 +17,7 @@ public class S_stick : MonoBehaviour
     private bool isDestroyed = false;
 
     private void OnCollisionEnter(Collision collision){
+        // Debug.Log("stick :: Collision with: " + collision.gameObject.tag);
         if (!isStuck && collision.gameObject.tag == "Target"){
             StickToTarget(collision.gameObject);
         } else {
@@ -31,10 +32,12 @@ public class S_stick : MonoBehaviour
         
         // Attach the arrow to the target by setting its parent.
         transform.parent = target.transform;
+        // transform.localRotation = Quaternion.identity;
 
         GameObject arrow = Instantiate(stickArrowPrefab);
         arrow.transform.localPosition = transform.position;
         arrow.transform.forward = transform.forward;
+        
         isDestroyed = true;
 
         Destroy(gameObject);
@@ -44,7 +47,7 @@ public class S_stick : MonoBehaviour
         rigidbody.isKinematic = false;
 
         transform.parent = target.transform;
-
+     
         GameObject arrow = Instantiate(NonStickArrowPrefab);
         arrow.transform.localPosition = transform.position;
         arrow.transform.localRotation = transform.localRotation;
@@ -53,6 +56,4 @@ public class S_stick : MonoBehaviour
         Destroy(gameObject);
     }
 
-
-    
 }
